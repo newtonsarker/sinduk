@@ -3,12 +3,18 @@
  */
 package io.ns.sinduk;
 
+import io.ns.sinduk.services.ProfileService;
+
 public class App {
-    public String getGreeting() {
+    public String start() {
+        var profileService = new ProfileService();
+
+        profileService.profileExists();
+
         return "Hello World!";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        System.out.println(new App().start());
     }
 }

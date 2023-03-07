@@ -1,13 +1,14 @@
 package io.ns.sinduk.services;
 
 import io.ns.sinduk.utils.FileUtil;
+import io.ns.sinduk.utils.PBEUtil;
 import io.ns.sinduk.vo.Profile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 
 public class ProfileServiceTest {
 
@@ -15,9 +16,9 @@ public class ProfileServiceTest {
 
     @BeforeEach
     public void setup() {
-        FileUtil.deleteFile(profileService.publicKeyFilePath());
-        FileUtil.deleteFile(profileService.privateKeyFilePath());
-        FileUtil.deleteFile(profileService.getProfileFilePath());
+        //FileUtil.deleteFile(profileService.publicKeyFilePath());
+        //FileUtil.deleteFile(profileService.privateKeyFilePath());
+        //FileUtil.deleteFile(profileService.getProfileFilePath());
     }
 
     @Test
@@ -26,17 +27,26 @@ public class ProfileServiceTest {
     }
 
     @Test
-    public void should_be_able_to_create_a_new_profile() throws IOException, NoSuchAlgorithmException {
+    public void should_be_able_to_create_a_new_profile() throws IOException, GeneralSecurityException {
+        // given
+        var password = "tango";
+
         var profile = new Profile();
         profile.setFullName("John Doe");
         profile.setEmail("john.doe@sinduk.io");
         profile.setPassword("johndoe");
 
-        profileService.createProfile(profile);
+        // when
+        profileService.createProfile(profile, password);
 
-        Assertions.assertTrue(FileUtil.fileExists(profileService.publicKeyFilePath()));
-        Assertions.assertTrue(FileUtil.fileExists(profileService.privateKeyFilePath()));
+        // then
         Assertions.assertTrue(FileUtil.fileExists(profileService.getProfileFilePath()));
+
+        var encryptedProfile = FileUtil.readFromFile(profileService.getProfileFilePath());
+        System.out.println(encryptedProfile);
+
+        var decryptedProfile = PBEUtil.decrypt(encryptedProfile, password);
+        System.out.println(decryptedProfile);
     }
 
 }

@@ -4,12 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.ns.sinduk.utils.Base64Util;
 import io.ns.sinduk.utils.FileUtil;
-import io.ns.sinduk.utils.KeyUtil;
+import io.ns.sinduk.utils.PBEUtil;
+import io.ns.sinduk.utils.RSAKeyUtil;
 import io.ns.sinduk.vo.Profile;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 
 public class ProfileService {
 
@@ -26,14 +27,15 @@ public class ProfileService {
         return file.exists();
     }
 
-    public void createProfile(Profile profile) throws IOException, NoSuchAlgorithmException {
-        var keyPair = KeyUtil.generateKeyPair();
+    public void createProfile(Profile profile, String password) throws IOException, GeneralSecurityException {
+        var keyPair = RSAKeyUtil.generateKeyPair();
         profile.setPublicKey(Base64Util.encodeToString(keyPair.getPublic().getEncoded()));
         profile.setPrivateKey(Base64Util.encodeToString(keyPair.getPrivate().getEncoded()));
 
-        FileUtil.writeToFile(publicKeyFilePath(), profile.getPublicKey());
-        FileUtil.writeToFile(privateKeyFilePath(), profile.getPrivateKey());
-        FileUtil.writeToFile(getProfileFilePath(), gson.toJson(profile));
+        var profileJson = gson.toJson(profile);
+
+        FileUtil.deleteFile(getProfileFilePath());
+        FileUtil.writeToFile(getProfileFilePath(), PBEUtil.encrypt(profileJson, password));
     }
 
     public String getProfileLocation() {

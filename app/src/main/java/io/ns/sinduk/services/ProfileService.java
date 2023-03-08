@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import io.ns.sinduk.utils.Base64Util;
 import io.ns.sinduk.utils.FileUtil;
 import io.ns.sinduk.utils.PBEUtil;
-import io.ns.sinduk.utils.RSAKeyUtil;
+import io.ns.sinduk.utils.PublicKeyUtil;
 import io.ns.sinduk.vo.Profile;
 
 import java.io.File;
@@ -28,7 +28,7 @@ public class ProfileService {
     }
 
     public void createProfile(Profile profile, String password) throws IOException, GeneralSecurityException {
-        var keyPair = RSAKeyUtil.generateKeyPair();
+        var keyPair = PublicKeyUtil.generateKeyPair();
         profile.setPublicKey(Base64Util.encodeToString(keyPair.getPublic().getEncoded()));
         profile.setPrivateKey(Base64Util.encodeToString(keyPair.getPrivate().getEncoded()));
 

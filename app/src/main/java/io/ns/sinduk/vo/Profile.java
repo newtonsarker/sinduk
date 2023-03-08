@@ -4,7 +4,6 @@ public class Profile {
 
     private String fullName;
     private String email;
-    private String password;
     private String publicKey;
     private String privateKey;
 
@@ -24,14 +23,6 @@ public class Profile {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getPublicKey() {
         return publicKey;
     }
@@ -47,5 +38,4 @@ public class Profile {
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
     }
-
 }

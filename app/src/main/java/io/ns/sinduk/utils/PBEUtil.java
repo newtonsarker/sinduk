@@ -12,6 +12,10 @@ import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 
+/**
+ * A utility class that provides methods for encrypting and decrypting data using a symmetric key.
+ * Uses AES encryption algorithm in CBC mode with PKCS5Padding.
+ */
 public class PBEUtil {
 
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
@@ -20,6 +24,14 @@ public class PBEUtil {
     private static final int ITERATIONS = 65536;
     private static final int SALT_LENGTH = 8;
 
+    /**
+     * Encrypts a given string using the specified key
+     *
+     * @param plaintext The plaintext string to encrypt
+     * @param password The password to encrypt the text with
+     * @return The base64-encoded ciphertext
+     * @throws GeneralSecurityException If there is an error during encryption
+     */
     public static String encrypt(String plaintext, String password) throws GeneralSecurityException {
         byte[] salt = generateSalt();
 
@@ -34,6 +46,14 @@ public class PBEUtil {
         return Base64Util.encodeToString(encrypted);
     }
 
+    /**
+     * Decrypts a given ciphertext string using the specified key
+     *
+     * @param ciphertext The base64-encoded ciphertext to decrypt
+     * @param password The password to decrypt the text with
+     * @return The decrypted text
+     * @throws GeneralSecurityException
+     */
     public static String decrypt(String ciphertext, String password) throws GeneralSecurityException {
         byte[] encrypted = Base64Util.decodeToBytes(ciphertext);
         byte[] salt = new byte[SALT_LENGTH];
@@ -49,6 +69,14 @@ public class PBEUtil {
         return new String(plaintextBytes);
     }
 
+    /**
+     * Derives a symmetric key from a given password and salt using PBKDF2 algorithm
+     *
+     * @param password The password to derive the key from
+     * @param salt The salt to use in the derivation process
+     * @return The derived SecretKey object
+     * @throws GeneralSecurityException If there is an error during SecretKey generation
+     */
     private static SecretKey deriveKey(String password, byte[] salt) throws GeneralSecurityException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance(KEY_DERIVATION_ALGORITHM);
         KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH);
@@ -56,6 +84,12 @@ public class PBEUtil {
         return new SecretKeySpec(tmp.getEncoded(), "AES");
     }
 
+    /**
+     * Concatenates given byte arrays into a single byte array
+     *
+     * @param arrays Arrays of byte array
+     * @return The concatenated byte array
+     */
     private static byte[] concat(byte[]... arrays) {
         int totalLength = 0;
         for (byte[] array : arrays) {
@@ -70,6 +104,12 @@ public class PBEUtil {
         return result;
     }
 
+    /**
+     * Distribute a single byte array to multiple byte arrays
+     *
+     * @param input The source byte array to be distributed
+     * @param arrays The array of byte arrays to distribute the source byte array
+     */
     private static void split(byte[] input, byte[]... arrays) {
         int srcPos = 0;
         for (byte[] array : arrays) {
@@ -78,6 +118,11 @@ public class PBEUtil {
         }
     }
 
+    /**
+     * Generate the salt to use in the derivation process
+     *
+     * @return the salt
+     */
     private static byte[] generateSalt() {
         byte[] salt = new byte[SALT_LENGTH];
         SecureRandom random = new SecureRandom();

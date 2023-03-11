@@ -1,5 +1,9 @@
 package io.ns.sinduk.vo;
 
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class PrivateProfile {
 
     private String profileId;
@@ -7,6 +11,7 @@ public class PrivateProfile {
     private String email;
     private String publicKey;
     private String privateKey;
+    private Map<String, SecretRecord> secrets = new LinkedHashMap<>();
 
     public String getProfileId() {
         return profileId;
@@ -46,6 +51,14 @@ public class PrivateProfile {
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public Map<String, SecretRecord> getSecrets() {
+        return secrets;
+    }
+
+    public void setSecrets(Map<String, SecretRecord> secrets) {
+        this.secrets = secrets;
     }
 
 }

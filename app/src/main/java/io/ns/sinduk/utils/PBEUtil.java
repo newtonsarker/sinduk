@@ -52,7 +52,7 @@ public class PBEUtil {
      * @param ciphertext The base64-encoded ciphertext to decrypt
      * @param password The password to decrypt the text with
      * @return The decrypted text
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException If there is an error during encryption
      */
     public static String decrypt(String ciphertext, String password) throws GeneralSecurityException {
         byte[] encrypted = Base64Util.decodeToBytes(ciphertext);

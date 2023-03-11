@@ -41,6 +41,11 @@ public class ProfileServiceImpl implements ProfileService {
         privateProfile.setPublicKey(Base64Util.encodeToString(keyPair.getPublic().getEncoded()));
         privateProfile.setPrivateKey(Base64Util.encodeToString(keyPair.getPrivate().getEncoded()));
 
+        writeProfileToFile(privateProfile, password);
+    }
+
+    @Override
+    public void writeProfileToFile(PrivateProfile privateProfile, String password) throws IOException, GeneralSecurityException {
         var profileJson = gson.toJson(privateProfile);
 
         FileUtil.deleteFile(getProfileFilePath());

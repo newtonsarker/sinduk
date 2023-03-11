@@ -3,11 +3,11 @@
  */
 package io.ns.sinduk;
 
-import io.ns.sinduk.services.ProfileService;
+import io.ns.sinduk.services.ProfileServiceImpl;
 
 public class App {
     public String start() {
-        var profileService = new ProfileService();
+        var profileService = new ProfileServiceImpl();
 
         profileService.profileExists();
 

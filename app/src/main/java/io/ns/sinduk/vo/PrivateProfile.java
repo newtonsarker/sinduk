@@ -1,11 +1,20 @@
 package io.ns.sinduk.vo;
 
-public class Profile {
+public class PrivateProfile {
 
+    private String profileId;
     private String fullName;
     private String email;
     private String publicKey;
     private String privateKey;
+
+    public String getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(String profileId) {
+        this.profileId = profileId;
+    }
 
     public String getFullName() {
         return fullName;
@@ -38,4 +47,5 @@ public class Profile {
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
     }
+
 }

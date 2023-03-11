@@ -3,7 +3,7 @@ package io.ns.sinduk.services;
 import com.google.gson.Gson;
 import io.ns.sinduk.utils.FileUtil;
 import io.ns.sinduk.utils.PBEUtil;
-import io.ns.sinduk.vo.Profile;
+import io.ns.sinduk.vo.PrivateProfile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,14 +43,14 @@ public class ProfileServiceTest {
         var decryptedProfile = PBEUtil.decrypt(encryptedProfile, password);
 
         // then
-        var profile = gson.fromJson(decryptedProfile, Profile.class);
+        var profile = gson.fromJson(decryptedProfile, PrivateProfile.class);
         Assertions.assertEquals("John Doe", profile.getFullName());
     }
 
     private void createNewProfile(String password) throws IOException, GeneralSecurityException {
         FileUtil.deleteFile(profileService.getProfileFilePath());
 
-        var profile = new Profile();
+        var profile = new PrivateProfile();
         profile.setFullName("John Doe");
         profile.setEmail("john.doe@sinduk.io");
 

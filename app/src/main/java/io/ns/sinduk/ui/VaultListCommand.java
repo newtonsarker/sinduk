@@ -13,7 +13,7 @@ import picocli.CommandLine;
 public class VaultListCommand implements VaultValidator  {
 
     @CommandLine.Option(names = {"-p", "--password"}, required = true, interactive = true, description = "Passphrase for sinduk.")
-    String password;
+    char[] password;
 
     @Override
     public ProfileService getProfileService() {
@@ -22,13 +22,16 @@ public class VaultListCommand implements VaultValidator  {
 
     @Override
     public String getPassword() {
-        return password;
+        if (password != null && password.length > 0) {
+            return new String(password);
+        }
+        return null;
     }
 
     @Override
     public Integer call() throws Exception {
         if (isProfileValid()) {
-            var profile = getProfileService().loadProfile(password);
+            var profile = getProfileService().loadProfile(getPassword());
             if (profile.getProfileId() != null && !profile.getProfileId().isEmpty()) {
                 String recordId = CommandLine.Help.Ansi.AUTO.string("@|bold,green,underline ID|@");
                 String username = CommandLine.Help.Ansi.AUTO.string("@|bold,green,underline Username|@");

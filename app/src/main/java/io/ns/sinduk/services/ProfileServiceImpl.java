@@ -50,6 +50,7 @@ public class ProfileServiceImpl implements ProfileService {
         var privateProfile = loadProfile(password);
 
         var publicProfile = new PublicProfile();
+        publicProfile.setProfileId(privateProfile.getProfileId());
         publicProfile.setFullName(privateProfile.getFullName());
         publicProfile.setEmail(privateProfile.getEmail());
         publicProfile.setPublicKey(privateProfile.getPublicKey());

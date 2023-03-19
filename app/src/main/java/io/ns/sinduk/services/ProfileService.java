@@ -1,6 +1,7 @@
 package io.ns.sinduk.services;
 
 import io.ns.sinduk.vo.PrivateProfile;
+import io.ns.sinduk.vo.PublicProfile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -42,6 +43,16 @@ public interface ProfileService {
      * @throws GeneralSecurityException If there is an error during encryption
      */
     void createProfile(PrivateProfile privateProfile, String password) throws IOException, GeneralSecurityException;
+
+    /**
+     * Retrieves the public profile
+     *
+     * @param password The password to unlock profile
+     * @return Public profile information
+     * @throws GeneralSecurityException If there is an error during encryption
+     * @throws IOException If there is an error during file read operation
+     */
+    PublicProfile retrievePublicProfile(String password) throws GeneralSecurityException, IOException;
 
     /**
      * Encrypts the given profile using password based encryption and write in the file

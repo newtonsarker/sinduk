@@ -1,13 +1,16 @@
 package io.ns.sinduk.ui;
 
 
+import io.ns.sinduk.ui.profile.ProfileCreateCommand;
+import io.ns.sinduk.ui.profile.ProfileViewCommand;
 import picocli.CommandLine;
 
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name="vault", version = "0.1", mixinStandardHelpOptions = true,
+@CommandLine.Command(version = "0.1", mixinStandardHelpOptions = true,
         subcommands = {
-                VaultCreateCommand.class,
+                ProfileCreateCommand.class,
+                ProfileViewCommand.class,
                 VaultListCommand.class
         }
 )

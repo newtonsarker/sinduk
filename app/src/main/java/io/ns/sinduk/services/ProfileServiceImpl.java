@@ -7,6 +7,7 @@ import io.ns.sinduk.utils.FileUtil;
 import io.ns.sinduk.utils.PBEUtil;
 import io.ns.sinduk.utils.PublicKeyUtil;
 import io.ns.sinduk.vo.PrivateProfile;
+import io.ns.sinduk.vo.PublicProfile;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,18 @@ public class ProfileServiceImpl implements ProfileService {
         privateProfile.setPrivateKey(Base64Util.encodeToString(keyPair.getPrivate().getEncoded()));
 
         writeProfileToFile(privateProfile, password);
+    }
+
+    @Override
+    public PublicProfile retrievePublicProfile(String password) throws GeneralSecurityException, IOException {
+        var privateProfile = loadProfile(password);
+
+        var publicProfile = new PublicProfile();
+        publicProfile.setFullName(privateProfile.getFullName());
+        publicProfile.setEmail(privateProfile.getEmail());
+        publicProfile.setPublicKey(privateProfile.getPublicKey());
+
+        return publicProfile;
     }
 
     @Override

@@ -1,8 +1,9 @@
 package io.ns.sinduk.ui;
 
-
 import io.ns.sinduk.ui.profile.ProfileCreateCommand;
 import io.ns.sinduk.ui.profile.ProfileViewCommand;
+import io.ns.sinduk.ui.vault.VaultAddCommand;
+import io.ns.sinduk.ui.vault.VaultListCommand;
 import picocli.CommandLine;
 
 import java.util.concurrent.Callable;
@@ -11,6 +12,7 @@ import java.util.concurrent.Callable;
         subcommands = {
                 ProfileCreateCommand.class,
                 ProfileViewCommand.class,
+                VaultAddCommand.class,
                 VaultListCommand.class
         }
 )

@@ -13,6 +13,7 @@ import picocli.CommandLine.Help.Column;
 import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -29,6 +30,9 @@ public class VaultListCommand implements VaultValidator {
 
     @CommandLine.Option(names = {"-p", "--password"}, description = Labels.password)
     char[] password;
+
+    @CommandLine.Option(names = {"-f", "--find"}, description = Labels.find)
+    String findTerm;
 
     @Override
     public ProfileService getProfileService() {
@@ -62,9 +66,9 @@ public class VaultListCommand implements VaultValidator {
         System.out.println("\n");
     }
 
-    private static ArrayList<SecretRecord> copySecretList(PrivateProfile profile) {
+    private ArrayList<SecretRecord> copySecretList(PrivateProfile profile) {
         var secrets = new ArrayList<SecretRecord>();
-        profile.getSecrets().forEach((id, record) -> secrets.add(record));
+        profile.getSecrets().values().stream().filter(this::findByTerm).forEach(secrets::add);
         return secrets;
     }
 
@@ -91,7 +95,7 @@ public class VaultListCommand implements VaultValidator {
     }
 
     private String[] createRow(SecretRecord secretRecord) {
-        return new String[]{
+        return new String[] {
                 secretRecord.getRecordId(),
                 secretRecord.getUsername(),
                 secretRecord.getGroupName(),
@@ -138,6 +142,22 @@ public class VaultListCommand implements VaultValidator {
 
     private static void getColMaxLength(AtomicInteger length, String headerName, String columnValue) {
         length.set(Math.max(Math.max(length.get(), headerName.length()), columnValue.length()));
+    }
+
+    private boolean findByTerm(SecretRecord secretRecord) {
+        return findTerm == null
+                || findTerm.trim().isEmpty()
+                || containsFindTerm(secretRecord.getUsername())
+                || containsFindTerm(secretRecord.getGroupName())
+                || containsFindTerm(secretRecord.getOrganizationCode())
+                || containsFindTerm(secretRecord.getEnvironmentName())
+                || containsFindTerm(secretRecord.getNote());
+    }
+
+    private boolean containsFindTerm(String value) {
+        return (value != null)
+                && !value.isEmpty()
+                && value.toLowerCase(Locale.ROOT).contains(findTerm.trim().toLowerCase());
     }
 
 }

@@ -8,6 +8,7 @@ import io.ns.sinduk.utils.ConsoleUtil;
 import io.ns.sinduk.vo.PrivateProfile;
 import io.ns.sinduk.vo.SecretRecord;
 import picocli.CommandLine;
+import picocli.CommandLine.Help.Column;
 
 import java.io.Console;
 import java.util.ArrayList;
@@ -99,41 +100,44 @@ public class VaultListCommand implements VaultValidator {
         };
     }
 
-    private CommandLine.Help.Column[] createColumnConfig(ArrayList<SecretRecord> secrets) {
-        return new CommandLine.Help.Column[] {
+    private Column[] createColumnConfig(ArrayList<SecretRecord> secrets) {
+        final var colDividerWidth = 3;
+        return new Column[] {
                 // record id
-                new CommandLine.Help.Column(maxLength(secrets, 0), 2, CommandLine.Help.Column.Overflow.SPAN),
+                new Column(maxLength(secrets, 0) + colDividerWidth, 2, Column.Overflow.SPAN),
 
                 // user name
-                new CommandLine.Help.Column(maxLength(secrets, 1), 2, CommandLine.Help.Column.Overflow.SPAN),
+                new Column(maxLength(secrets, 1) + colDividerWidth, 2, Column.Overflow.SPAN),
 
                 // group name
-                new CommandLine.Help.Column(maxLength(secrets, 2), 2, CommandLine.Help.Column.Overflow.SPAN),
+                new Column(maxLength(secrets, 2) + colDividerWidth, 2, Column.Overflow.SPAN),
 
                 // organization code
-                new CommandLine.Help.Column(maxLength(secrets, 3), 2, CommandLine.Help.Column.Overflow.SPAN),
+                new Column(maxLength(secrets, 3) + colDividerWidth, 2, Column.Overflow.SPAN),
 
                 // environment
-                new CommandLine.Help.Column(maxLength(secrets, 4), 2, CommandLine.Help.Column.Overflow.SPAN)
+                new Column(maxLength(secrets, 4) + colDividerWidth, 2, Column.Overflow.SPAN)
         };
     }
 
     private int maxLength(List<SecretRecord> secretRecords, int colIndex) {
-        AtomicInteger result = new AtomicInteger();
+        final var length = new AtomicInteger();
         secretRecords.stream()
                 .filter(secretRecord -> secretRecord.getRecordId() != null)
                 .forEach(secretRecord -> {
                     switch (colIndex) {
-                        case 0 -> result.set(Math.max(Math.max(result.get(), COLUMN_ID.length()), secretRecord.getRecordId().length()));
-                        case 1 -> result.set(Math.max(Math.max(result.get(), COLUMN_USER_NAME.length()), secretRecord.getUsername().length()));
-                        case 2 -> result.set(Math.max(Math.max(result.get(), COLUMN_GROUP_NAME.length()), secretRecord.getGroupName().length()));
-                        case 3 -> result.set(Math.max(Math.max(result.get(), COLUMN_ORGANIZATION_CODE.length()), secretRecord.getOrganizationCode().length()));
-                        case 4 -> result.set(Math.max(Math.max(result.get(), COLUMN_ENVIRONMENT.length()), secretRecord.getEnvironmentName().length()));
+                        case 0 -> getColMaxLength(length, COLUMN_ID, secretRecord.getRecordId());
+                        case 1 -> getColMaxLength(length, COLUMN_USER_NAME, secretRecord.getUsername());
+                        case 2 -> getColMaxLength(length, COLUMN_GROUP_NAME, secretRecord.getGroupName());
+                        case 3 -> getColMaxLength(length, COLUMN_ORGANIZATION_CODE, secretRecord.getOrganizationCode());
+                        case 4 -> getColMaxLength(length, COLUMN_ENVIRONMENT, secretRecord.getEnvironmentName());
                     }
                 });
+        return length.get();
+    }
 
-        var defaultLength = 3;
-        return result.get() + defaultLength;
+    private static void getColMaxLength(AtomicInteger length, String headerName, String columnValue) {
+        length.set(Math.max(Math.max(length.get(), headerName.length()), columnValue.length()));
     }
 
 }

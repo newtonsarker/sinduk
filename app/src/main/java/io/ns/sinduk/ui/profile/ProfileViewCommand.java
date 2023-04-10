@@ -14,9 +14,6 @@ public class ProfileViewCommand implements VaultValidator {
     @CommandLine.Option(names = {"-p", "--password"}, description = Labels.password)
     char[] password;
 
-    @CommandLine.Option(names = {"-b", "--beautify"}, description = Labels.beautify)
-    boolean beautify = false;
-
     @Override
     public ProfileService getProfileService() {
         return AppContext.getObject(ProfileService.class);
@@ -52,10 +49,7 @@ public class ProfileViewCommand implements VaultValidator {
     }
 
     private Gson createGsonInstance() {
-        if (beautify) {
-            return new GsonBuilder().setPrettyPrinting().create();
-        }
-        return new Gson();
+        return new GsonBuilder().setPrettyPrinting().create();
     }
 
 }

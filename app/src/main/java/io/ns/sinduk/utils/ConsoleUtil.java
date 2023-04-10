@@ -21,10 +21,32 @@ public class ConsoleUtil {
     }
 
     public static String readOptionalParameter(Console console, String label, String parameter) {
-        if (parameter == null) {
-            return console.readLine(label + ": ");
-        }
+        if (parameter == null) return console.readLine(label + ": ");
         return null;
+    }
+
+    public static String readParameterOrDefault(Console console, String label, String parameter, String defaultValue) {
+        if (parameter != null && !parameter.isEmpty()) {
+            return parameter;
+        } else {
+            String consoleValue = console.readLine(label + ": ");
+            if (consoleValue != null && !consoleValue.isEmpty()) {
+                return consoleValue;
+            }
+            return defaultValue;
+        }
+    }
+
+    public static char[] readSecretOrDefault(Console console, String label, char[] parameter, char[] defaultValue) {
+        if (parameter != null && parameter.length > 0) {
+            return parameter;
+        } else {
+            char[] consoleValue = console.readPassword(label + ": ");
+            if (consoleValue == null || consoleValue.length < 1) {
+                return defaultValue;
+            }
+            return consoleValue;
+        }
     }
 
 }

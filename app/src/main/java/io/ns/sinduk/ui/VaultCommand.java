@@ -4,6 +4,7 @@ import io.ns.sinduk.ui.profile.ProfileCreateCommand;
 import io.ns.sinduk.ui.profile.ProfileViewCommand;
 import io.ns.sinduk.ui.vault.VaultAddCommand;
 import io.ns.sinduk.ui.vault.VaultListCommand;
+import io.ns.sinduk.ui.vault.VaultUpdateCommand;
 import io.ns.sinduk.ui.vault.VaultViewCommand;
 import picocli.CommandLine;
 
@@ -15,7 +16,8 @@ import java.util.concurrent.Callable;
                 ProfileViewCommand.class,
                 VaultAddCommand.class,
                 VaultListCommand.class,
-                VaultViewCommand.class
+                VaultViewCommand.class,
+                VaultUpdateCommand.class
         }
 )
 public class VaultCommand implements Callable<Integer> {

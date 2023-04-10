@@ -11,15 +11,17 @@ import picocli.CommandLine;
 
 import java.io.Console;
 import java.security.GeneralSecurityException;
-import java.util.UUID;
 
-@CommandLine.Command(name="vault-add", version = "0.1", mixinStandardHelpOptions = true, requiredOptionMarker = '*')
-public class VaultAddCommand implements VaultValidator {
+@CommandLine.Command(name="vault-update", version = "0.1", mixinStandardHelpOptions = true, requiredOptionMarker = '*')
+public class VaultUpdateCommand implements VaultValidator {
 
     private final Console console = System.console();
 
     @CommandLine.Option(names = {"-p", "--password"}, description = Labels.password)
     char[] password;
+
+    @CommandLine.Option(names = {"-i", "--identifier"}, description = Labels.secretId)
+    String id;
 
     @CommandLine.Option(names = {"-u", "--username"}, description = Labels.username)
     String username;
@@ -52,40 +54,54 @@ public class VaultAddCommand implements VaultValidator {
         return new String(password);
     }
 
+    public String getId() {
+        if (id == null || id.isEmpty()) id = ConsoleUtil.readRequiredParameter(console, Labels.secretId);
+        return id;
+    }
+
     @Override
     public Integer call() throws Exception {
         if (isProfileValid()) {
-            if (!isProfileValid()) return CommandLine.ExitCode.SOFTWARE;
-            readParameters();
-
             var profile = getProfileService().loadProfile(getPassword());
-            var publicKey = profile.getPublicKey();
-            new SecretServiceImpl(profile).addOrUpdate(createRecord(publicKey), getPassword());
-
-            return CommandLine.ExitCode.OK;
+            var secretRecord = profile.getSecrets().get(getId());
+            if (secretRecord != null) {
+                readParameters(secretRecord, profile.getPrivateKey());
+                updateRecord(secretRecord, profile.getPublicKey());
+                new SecretServiceImpl(profile).addOrUpdate(secretRecord,getPassword());
+                return CommandLine.ExitCode.OK;
+            }
         }
         return CommandLine.ExitCode.SOFTWARE;
     }
 
-    private void readParameters() {
-        if (username == null) username = ConsoleUtil.readRequiredParameter(console, Labels.username);
-        if (secret == null) secret = ConsoleUtil.readRequiredSecret(console, Labels.secret);
-        groupName = ConsoleUtil.readOptionalParameter(console, Labels.groupName, groupName);
-        organizationCode = ConsoleUtil.readOptionalParameter(console, Labels.organization, organizationCode);
-        environmentName = ConsoleUtil.readOptionalParameter(console, Labels.environment, environmentName);
-        note = ConsoleUtil.readOptionalParameter(console, Labels.note, note);
+    private void readParameters(SecretRecord secretRecord, String privateKey) throws GeneralSecurityException {
+        username = ConsoleUtil.readParameterOrDefault(console, Labels.username, username, secretRecord.getUsername());
+        secret = ConsoleUtil.readSecretOrDefault(console,
+                Labels.secret,
+                secret,
+                secretRecord.getDecryptedPassword(privateKey).toCharArray());
+        groupName = ConsoleUtil.readParameterOrDefault(console,
+                Labels.groupName,
+                groupName,
+                secretRecord.getGroupName());
+        organizationCode = ConsoleUtil.readParameterOrDefault(console,
+                Labels.organization,
+                organizationCode,
+                secretRecord.getOrganizationCode());
+        environmentName = ConsoleUtil.readParameterOrDefault(console,
+                Labels.environment,
+                environmentName,
+                secretRecord.getEnvironmentName());
+        note = ConsoleUtil.readParameterOrDefault(console, Labels.note, note, secretRecord.getNote());
     }
 
-    SecretRecord createRecord(String publicKey) throws GeneralSecurityException {
-        var record = new SecretRecord();
-        record.setRecordId(UUID.randomUUID().toString());
+    private void updateRecord(SecretRecord record, String publicKey) throws GeneralSecurityException {
         record.setUsername(username);
         record.setPassword(publicKey, new String(secret));
         record.setGroupName(groupName);
         record.setOrganizationCode(organizationCode);
         record.setEnvironmentName(environmentName);
         record.setNote(note);
-        return record;
     }
 
 }

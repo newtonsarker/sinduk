@@ -40,9 +40,7 @@ public class VaultViewCommand implements VaultValidator {
     }
 
     public String getId() {
-        if (id == null || id.isEmpty()) {
-            id = ConsoleUtil.readRequiredParameter(console, Labels.secretId);
-        }
+        if (id == null || id.isEmpty()) id = ConsoleUtil.readRequiredParameter(console, Labels.secretId);
         return id;
     }
 
